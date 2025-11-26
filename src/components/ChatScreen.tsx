@@ -180,6 +180,7 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
     contactReason: '',
   });
   const [validationError, setValidationError] = useState<string>('');
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -188,7 +189,7 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isTyping]);
 
   // Processar ação inicial do menu
   useEffect(() => {
@@ -229,17 +230,27 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
     setMessages((prev) => [...prev, newMessage]);
   };
 
+  const addBotMessageWithTyping = (text: string, options?: string[], delay: number = 1200) => {
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      addMessage(text, 'bot', options);
+    }, delay);
+  };
+
   const handleCertificateTypeSelect = (type: string) => {
     addMessage(type, 'user');
     setUserData((prev) => ({ ...prev, certificateType: type }));
+    setIsTyping(true);
     
     setTimeout(() => {
+      setIsTyping(false);
       addMessage(
         'Ótimo! Para prosseguir, preciso de algumas informações.\n\nPor favor, informe seu nome completo:',
         'bot'
       );
       setCurrentStep('name');
-    }, 800);
+    }, 1200);
   };
 
   const handleSendMessage = () => {
@@ -257,10 +268,12 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
     addMessage(inputValue, 'user');
     const value = inputValue;
     setInputValue('');
+    setIsTyping(true);
 
     setTimeout(() => {
+      setIsTyping(false);
       processUserInput(value);
-    }, 800);
+    }, 1200);
   };
 
   const validateInput = (value: string, step: string): { valid: boolean; message?: string } => {
@@ -432,24 +445,32 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
     } else if (currentStep === 'building-type') {
       addMessage(option, 'user');
       setInputValue('');
+      setIsTyping(true);
       setTimeout(() => {
+        setIsTyping(false);
         processUserInput(option);
-      }, 800);
+      }, 1200);
     } else if (currentStep === 'visit-time') {
       addMessage(option, 'user');
       setInputValue('');
+      setIsTyping(true);
       setTimeout(() => {
+        setIsTyping(false);
         processUserInput(option);
-      }, 800);
+      }, 1200);
     } else if (currentStep === 'contact-time') {
       addMessage(option, 'user');
       setInputValue('');
+      setIsTyping(true);
       setTimeout(() => {
+        setIsTyping(false);
         processUserInput(option);
-      }, 800);
+      }, 1200);
     } else if (currentStep === 'menu') {
       addMessage(option, 'user');
+      setIsTyping(true);
       setTimeout(() => {
+        setIsTyping(false);
         if (option === 'Novo certificado') {
           setCurrentStep('certificate-type');
           setUserData({
@@ -513,10 +534,12 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
             ['Agendar vistoria', 'Novo certificado', 'Voltar ao menu']
           );
         }
-      }, 800);
+      }, 1200);
     } else if (currentStep === 'menu-after-visit') {
       addMessage(option, 'user');
+      setIsTyping(true);
       setTimeout(() => {
+        setIsTyping(false);
         if (option === 'Novo certificado') {
           resetToNewCertificate();
         } else if (option === 'Consultar protocolo') {
@@ -534,10 +557,12 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
             ['Novo certificado', 'Voltar ao início']
           );
         }
-      }, 800);
+      }, 1200);
     } else if (currentStep === 'menu-after-protocol') {
       addMessage(option, 'user');
+      setIsTyping(true);
       setTimeout(() => {
+        setIsTyping(false);
         if (option === 'Novo certificado') {
           resetToNewCertificate();
         } else if (option === 'Falar com atendente') {
@@ -563,10 +588,12 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
             ['Novo certificado', 'Voltar ao início']
           );
         }
-      }, 800);
+      }, 1200);
     } else if (currentStep === 'menu-after-contact') {
       addMessage(option, 'user');
+      setIsTyping(true);
       setTimeout(() => {
+        setIsTyping(false);
         if (option === 'Novo certificado') {
           resetToNewCertificate();
         } else if (option === 'Consultar protocolo') {
@@ -584,7 +611,7 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
             ['Novo certificado', 'Voltar ao início']
           );
         }
-      }, 800);
+      }, 1200);
     }
   };
 
@@ -725,6 +752,30 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
             </div>
           </div>
         ))}
+        
+        {/* Typing Indicator */}
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="bg-white text-gray-800 rounded-2xl rounded-bl-sm shadow-sm px-4 py-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-4 h-4 text-red-700" />
+                <span className="text-xs text-red-700">CBMPE Bot</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ width: '8px', height: '8px', backgroundColor: '#dc2626', borderRadius: '50%', animation: 'typing 1s infinite', animationDelay: '0s' }}></span>
+                <span style={{ width: '8px', height: '8px', backgroundColor: '#dc2626', borderRadius: '50%', animation: 'typing 1s infinite', animationDelay: '0.2s' }}></span>
+                <span style={{ width: '8px', height: '8px', backgroundColor: '#dc2626', borderRadius: '50%', animation: 'typing 1s infinite', animationDelay: '0.4s' }}></span>
+              </div>
+              <style>{`
+                @keyframes typing {
+                  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+                  50% { opacity: 1; transform: scale(1); }
+                }
+              `}</style>
+            </div>
+          </div>
+        )}
+        
         <div ref={messagesEndRef} />
       </div>
 
