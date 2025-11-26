@@ -63,12 +63,14 @@ export function MenuScreen({ onNavigate, onChatAction, isDesktop = false }: Menu
     <div className="h-full bg-gray-50 flex flex-col">
       {/* Header */}
       <div style={{ paddingTop: isDesktop ? '24px' : '48px' }} className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-6">
-        {!isDesktop && (
-          <button onClick={() => onNavigate('chat')} className="mb-4">
-            <ArrowLeft className="w-6 h-6 text-white" />
-          </button>
-        )}
-        <h1 className="text-white text-2xl mb-2">Menu</h1>
+        <div className="flex items-center gap-3 mb-2">
+          {!isDesktop && (
+            <button onClick={() => onNavigate('chat')}>
+              <ArrowLeft className="w-6 h-6 text-white" />
+            </button>
+          )}
+          <h1 className="text-white text-2xl">Menu</h1>
+        </div>
         <p className="text-white/80 text-sm">
           Corpo de Bombeiros de Pernambuco
         </p>
