@@ -123,6 +123,13 @@ export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
         <button onClick={() => onNavigate('login')}>
           <ArrowLeft className="w-6 h-6 text-white" />
         </button>
+        <div className="w-10 h-10 bg-white rounded-full overflow-hidden flex items-center justify-center">
+          <img
+            src="https://soge.bombeiros.pe.gov.br/assets/logo_cbmpe-0b92da2a2895c00fe13b07d9fe5a97e63fe87bf662dc310e8215944764735104.png"
+            alt="CBMPE"
+            className="w-8 h-8 md:w-10 md:h-10 object-contain"
+          />
+        </div>
         <div>
           <h1 className="text-white text-xl">Criar Conta</h1>
           <p className="text-white/80 text-xs">Preencha seus dados</p>
