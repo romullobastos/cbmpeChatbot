@@ -1,6 +1,8 @@
 import { Shield, FileText, ClipboardCheck, Building, Phone, Clock, ChevronRight, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Screen } from '../App';
+import heroImage from '../assets/images/image.png';
+import benefitsImage from '../assets/images/image1.png';
 
 interface LandingPageDesktopProps {
   onNavigate: (screen: Screen) => void;
@@ -47,12 +49,8 @@ export function LandingPageDesktop({ onNavigate }: LandingPageDesktopProps) {
               </Button>
             </div>
           </div>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            <div style={{ width: '280px', height: '280px', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: '200px', height: '200px', backgroundColor: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
-                <Shield style={{ width: '100px', height: '100px', color: '#b91c1c' }} />
-              </div>
-            </div>
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+            <img src={heroImage} alt="CBMPE" style={{ width: '400px', height: '400px', borderRadius: '50%', objectFit: 'cover' }} />
           </div>
         </div>
       </section>
@@ -164,9 +162,7 @@ export function LandingPageDesktop({ onNavigate }: LandingPageDesktopProps) {
             </div>
           </div>
           <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            <div style={{ width: '400px', height: '300px', backgroundColor: '#fee2e2', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Shield style={{ width: '120px', height: '120px', color: '#b91c1c' }} />
-            </div>
+            <img src={benefitsImage} alt="Benefícios" style={{ width: '400px', height: '300px', borderRadius: '24px', objectFit: 'cover' }} />
           </div>
         </div>
       </section>
