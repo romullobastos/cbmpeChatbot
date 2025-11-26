@@ -653,7 +653,7 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#f9fafb', overflow: 'hidden' }}>
+    <div style={{ height: '100%', minHeight: isDesktop ? 'auto' : '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#f9fafb', overflow: 'hidden', position: isDesktop ? 'relative' : 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
       {/* Header */}
       <div style={{ flexShrink: 0, paddingTop: isDesktop ? '16px' : '48px' }} className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-4 flex items-center justify-between shadow-lg">
         <div className="flex items-center gap-3">
