@@ -3,10 +3,13 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Menu, Shield, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Screen } from '../App';
+import { Screen, ChatAction } from '../App';
 
 interface ChatScreenProps {
   onNavigate: (screen: Screen) => void;
+  isDesktop?: boolean;
+  initialAction?: ChatAction;
+  onActionHandled?: () => void;
 }
 
 type MessageType = 'bot' | 'user' | 'error';
@@ -151,7 +154,7 @@ const generateProtocolDigits = (length: number = 10): string => {
   return digits;
 };
 
-export function ChatScreen({ onNavigate }: ChatScreenProps) {
+export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onActionHandled }: ChatScreenProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -185,6 +188,34 @@ export function ChatScreen({ onNavigate }: ChatScreenProps) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Processar ação inicial do menu
+  useEffect(() => {
+    if (initialAction && onActionHandled) {
+      setTimeout(() => {
+        if (initialAction === 'certificates') {
+          // Já está na tela de certificados por padrão
+        } else if (initialAction === 'protocol') {
+          setMessages([{
+            id: 1,
+            type: 'bot',
+            text: 'Para consultar seu protocolo, por favor informe o número:\n\n(Formato: CBMPE-XXXXXXXXXX)',
+            timestamp: new Date(),
+          }]);
+          setCurrentStep('protocol-number');
+        } else if (initialAction === 'contact') {
+          setMessages([{
+            id: 1,
+            type: 'bot',
+            text: 'Para solicitar contato com um atendente, primeiro preciso de seu telefone:\n\n(Formato: (00) 00000-0000)',
+            timestamp: new Date(),
+          }]);
+          setCurrentStep('phone-for-contact');
+        }
+        onActionHandled();
+      }, 100);
+    }
+  }, [initialAction, onActionHandled]);
 
   const addMessage = (text: string, type: MessageType, options?: string[]) => {
     const newMessage: Message = {
@@ -622,9 +653,9 @@ export function ChatScreen({ onNavigate }: ChatScreenProps) {
   };
 
   return (
-    <div className="h-full bg-gray-50 flex flex-col">
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#f9fafb', overflow: 'hidden' }}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-4 pt-12 flex items-center justify-between shadow-lg">
+      <div style={{ flexShrink: 0, paddingTop: isDesktop ? '16px' : '48px' }} className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-4 flex items-center justify-between shadow-lg">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
             <Shield className="w-6 h-6 text-red-700" />
@@ -634,13 +665,15 @@ export function ChatScreen({ onNavigate }: ChatScreenProps) {
             <p className="text-white/80 text-xs">Online</p>
           </div>
         </div>
-        <button onClick={() => onNavigate('menu')}>
-          <Menu className="w-6 h-6 text-white" />
-        </button>
+        {!isDesktop && (
+          <button onClick={() => onNavigate('menu')}>
+            <Menu className="w-6 h-6 text-white" />
+          </button>
+        )}
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }} className="space-y-4">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -689,7 +722,7 @@ export function ChatScreen({ onNavigate }: ChatScreenProps) {
 
       {/* Input */}
       {currentStep !== 'certificate-type' && currentStep !== 'building-type' && currentStep !== 'menu' && currentStep !== 'visit-time' && currentStep !== 'menu-after-visit' && currentStep !== 'contact-time' && currentStep !== 'menu-after-protocol' && currentStep !== 'menu-after-contact' && (
-        <div className="bg-white border-t border-gray-200 px-4 py-3">
+        <div style={{ flexShrink: 0 }} className="bg-white border-t border-gray-200 px-4 py-3">
           {validationError && (
             <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />

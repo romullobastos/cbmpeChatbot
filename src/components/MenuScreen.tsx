@@ -1,8 +1,10 @@
 import { ArrowLeft, FileText, Search, Clock, Phone, MapPin, AlertCircle } from 'lucide-react';
-import { Screen } from '../App';
+import { Screen, ChatAction } from '../App';
 
 interface MenuScreenProps {
   onNavigate: (screen: Screen) => void;
+  onChatAction?: (action: ChatAction) => void;
+  isDesktop?: boolean;
 }
 
 const menuItems = [
@@ -11,47 +13,61 @@ const menuItems = [
     title: 'Certificados',
     description: 'AVCB, CLCB e outros documentos',
     color: 'bg-red-100 text-red-700',
+    action: 'certificates' as ChatAction,
   },
   {
     icon: Search,
     title: 'Consultar Protocolo',
     description: 'Acompanhe sua solicitação',
     color: 'bg-blue-100 text-blue-700',
+    action: 'protocol' as ChatAction,
   },
   {
     icon: Clock,
     title: 'Histórico',
     description: 'Veja suas solicitações anteriores',
     color: 'bg-green-100 text-green-700',
+    action: null,
   },
   {
     icon: MapPin,
     title: 'Unidades',
     description: 'Encontre o posto mais próximo',
     color: 'bg-orange-100 text-orange-700',
+    action: null,
   },
   {
     icon: AlertCircle,
     title: 'Emergência',
     description: 'Informações de segurança',
     color: 'bg-red-100 text-red-700',
+    action: null,
   },
   {
     icon: Phone,
     title: 'Contato',
     description: 'Fale conosco',
     color: 'bg-purple-100 text-purple-700',
+    action: 'contact' as ChatAction,
   },
 ];
 
-export function MenuScreen({ onNavigate }: MenuScreenProps) {
+export function MenuScreen({ onNavigate, onChatAction, isDesktop = false }: MenuScreenProps) {
+  const handleMenuClick = (action: ChatAction) => {
+    if (action && onChatAction) {
+      onChatAction(action);
+    }
+  };
+
   return (
     <div className="h-full bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-6 pt-12">
-        <button onClick={() => onNavigate('chat')} className="mb-4">
-          <ArrowLeft className="w-6 h-6 text-white" />
-        </button>
+      <div style={{ paddingTop: isDesktop ? '24px' : '48px' }} className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-6">
+        {!isDesktop && (
+          <button onClick={() => onNavigate('chat')} className="mb-4">
+            <ArrowLeft className="w-6 h-6 text-white" />
+          </button>
+        )}
         <h1 className="text-white text-2xl mb-2">Menu</h1>
         <p className="text-white/80 text-sm">
           Corpo de Bombeiros de Pernambuco
@@ -64,7 +80,8 @@ export function MenuScreen({ onNavigate }: MenuScreenProps) {
           {menuItems.map((item, index) => (
             <button
               key={index}
-              className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow text-left"
+              onClick={() => handleMenuClick(item.action)}
+              className={`bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow text-left ${item.action ? 'cursor-pointer' : 'cursor-default opacity-60'}`}
             >
               <div className={`w-12 h-12 rounded-full ${item.color} flex items-center justify-center mb-3`}>
                 <item.icon className="w-6 h-6" />
