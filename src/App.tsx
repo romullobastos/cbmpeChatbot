@@ -49,6 +49,12 @@ export default function App() {
     localStorage.setItem('cbmpe-screen', 'chat');
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    setCurrentScreen('splash');
+    setChatAction(null);
+  };
+
   // Telas que não precisam do layout com sidebar (pré-login)
   const isPreLoginScreen = ['splash', 'login', 'register', 'forgot-password'].includes(currentScreen);
 
@@ -60,8 +66,8 @@ export default function App() {
         {currentScreen === 'login' && <LoginScreen onNavigate={navigateTo} />}
         {currentScreen === 'register' && <RegisterScreen onNavigate={navigateTo} />}
         {currentScreen === 'forgot-password' && <ForgotPasswordScreen onNavigate={navigateTo} />}
-        {currentScreen === 'chat' && <ChatScreen onNavigate={navigateTo} initialAction={chatAction} onActionHandled={() => setChatAction(null)} />}
-        {currentScreen === 'menu' && <MenuScreen onNavigate={navigateTo} onChatAction={navigateToChatWithAction} />}
+        {currentScreen === 'chat' && <ChatScreen onNavigate={navigateTo} initialAction={chatAction} onActionHandled={() => setChatAction(null)} onLogout={handleLogout} />}
+        {currentScreen === 'menu' && <MenuScreen onNavigate={navigateTo} onChatAction={navigateToChatWithAction} onLogout={handleLogout} />}
       </div>
     );
   }
@@ -132,7 +138,7 @@ export default function App() {
 
           <div style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
             <button
-              onClick={() => navigateTo('login')}
+              onClick={handleLogout}
               style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'transparent', border: 'none', color: 'white', cursor: 'pointer', textAlign: 'left', fontSize: '14px' }}
             >
               <svg style={{ width: '18px', height: '18px', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,8 +175,8 @@ export default function App() {
           <div style={{ flex: 1, padding: '32px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <div style={{ maxWidth: '896px', margin: '0 auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
               <div style={{ backgroundColor: 'white', borderRadius: '16px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-                {currentScreen === 'chat' && <ChatScreen onNavigate={navigateTo} isDesktop initialAction={chatAction} onActionHandled={() => setChatAction(null)} />}
-                {currentScreen === 'menu' && <MenuScreen onNavigate={navigateTo} onChatAction={navigateToChatWithAction} isDesktop />}
+                {currentScreen === 'chat' && <ChatScreen onNavigate={navigateTo} isDesktop initialAction={chatAction} onActionHandled={() => setChatAction(null)} onLogout={handleLogout} />}
+                {currentScreen === 'menu' && <MenuScreen onNavigate={navigateTo} onChatAction={navigateToChatWithAction} isDesktop onLogout={handleLogout} />}
               </div>
             </div>
           </div>

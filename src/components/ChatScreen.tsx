@@ -10,6 +10,7 @@ interface ChatScreenProps {
   isDesktop?: boolean;
   initialAction?: ChatAction;
   onActionHandled?: () => void;
+  onLogout?: () => void;
 }
 
 type MessageType = 'bot' | 'user' | 'error';
@@ -154,7 +155,7 @@ const generateProtocolDigits = (length: number = 10): string => {
   return digits;
 };
 
-export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onActionHandled }: ChatScreenProps) {
+export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onActionHandled, onLogout }: ChatScreenProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -670,7 +671,7 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
             <button onClick={() => onNavigate('menu')}>
               <Menu className="w-6 h-6 text-white" />
             </button>
-            <button onClick={() => onNavigate('splash')} title="Sair">
+            <button onClick={onLogout} title="Sair">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>

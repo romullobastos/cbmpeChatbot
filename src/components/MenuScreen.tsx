@@ -5,6 +5,7 @@ interface MenuScreenProps {
   onNavigate: (screen: Screen) => void;
   onChatAction?: (action: ChatAction) => void;
   isDesktop?: boolean;
+  onLogout?: () => void;
 }
 
 const menuItems = [
@@ -52,7 +53,7 @@ const menuItems = [
   },
 ];
 
-export function MenuScreen({ onNavigate, onChatAction, isDesktop = false }: MenuScreenProps) {
+export function MenuScreen({ onNavigate, onChatAction, isDesktop = false, onLogout }: MenuScreenProps) {
   const handleMenuClick = (action: ChatAction) => {
     if (action && onChatAction) {
       onChatAction(action);
