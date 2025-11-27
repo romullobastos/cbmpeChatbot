@@ -5,6 +5,7 @@ import { RegisterScreen } from './components/RegisterScreen';
 import { ForgotPasswordScreen } from './components/ForgotPasswordScreen';
 import { ChatScreen } from './components/ChatScreen';
 import { MenuScreen } from './components/MenuScreen';
+import { TopNav } from './components/TopNav';
 
 export type Screen = 'splash' | 'login' | 'register' | 'forgot-password' | 'chat' | 'menu';
 
@@ -16,6 +17,8 @@ export default function App() {
   };
 
   return (
+    <>
+    <TopNav onNavigate={navigateTo} />
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md h-[812px] bg-white rounded-[3rem] shadow-2xl overflow-hidden relative border-8 border-gray-800">
         {/* Notch */}
@@ -32,5 +35,6 @@ export default function App() {
         </div>
       </div>
     </div>
+    </>
   );
 }
