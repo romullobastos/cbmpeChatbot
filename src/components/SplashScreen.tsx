@@ -1,4 +1,4 @@
-import { Shield } from 'lucide-react';
+import React from 'react';
 import { Button } from './ui/button';
 
 interface SplashScreenProps {
@@ -9,8 +9,12 @@ export function SplashScreen({ onStart }: SplashScreenProps) {
   return (
     <div className="h-full bg-gradient-to-br from-red-700 via-red-600 to-red-800 flex flex-col items-center justify-between p-8 pt-16">
       <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-8 shadow-2xl">
-          <Shield className="w-20 h-20 text-red-700" />
+        <div className="w-32 h-32 md:w-36 md:h-36 bg-white rounded-full overflow-hidden flex items-center justify-center mb-8 shadow-2xl">
+          <img
+            src="https://soge.bombeiros.pe.gov.br/assets/logo_cbmpe-0b92da2a2895c00fe13b07d9fe5a97e63fe87bf662dc310e8215944764735104.png"
+            alt="CBMPE"
+            className="w-20 h-20 md:w-24 md:h-24 object-contain"
+          />
         </div>
         <h1 className="text-white text-3xl mb-2 text-center">CBMPE</h1>
         <h2 className="text-white text-xl mb-4 text-center">Corpo de Bombeiros</h2>

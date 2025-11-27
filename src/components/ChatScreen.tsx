@@ -626,8 +626,12 @@ export function ChatScreen({ onNavigate }: ChatScreenProps) {
       {/* Header */}
       <div className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-4 pt-12 flex items-center justify-between shadow-lg">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-            <Shield className="w-6 h-6 text-red-700" />
+          <div className="w-10 h-10 bg-white rounded-full overflow-hidden flex items-center justify-center">
+            <img
+              src="https://soge.bombeiros.pe.gov.br/assets/logo_cbmpe-0b92da2a2895c00fe13b07d9fe5a97e63fe87bf662dc310e8215944764735104.png"
+              alt="CBMPE"
+              className="w-8 h-8 object-contain"
+            />
           </div>
           <div>
             <h1 className="text-white">Assistente CBMPE</h1>

@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowLeft, FileText, Search, Clock, Phone, MapPin, AlertCircle } from 'lucide-react';
 import { Screen } from '../App';
 

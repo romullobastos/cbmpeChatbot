@@ -67,8 +67,12 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
     <div className="h-full bg-white flex flex-col">
       {/* Header */}
       <div className="bg-gradient-to-br from-red-700 via-red-600 to-red-800 px-6 pt-16 pb-12 text-center">
-        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-          <Shield className="w-12 h-12 text-red-700" />
+        <div className="w-20 h-20 bg-white rounded-full overflow-hidden flex items-center justify-center mx-auto mb-4">
+          <img
+            src="https://soge.bombeiros.pe.gov.br/assets/logo_cbmpe-0b92da2a2895c00fe13b07d9fe5a97e63fe87bf662dc310e8215944764735104.png"
+            alt="CBMPE"
+            className="w-12 h-12 md:w-16 md:h-16 object-contain"
+          />
         </div>
         <h1 className="text-white text-2xl mb-2">CBMPE Digital</h1>
         <p className="text-white/80 text-sm">Corpo de Bombeiros de Pernambuco</p>
