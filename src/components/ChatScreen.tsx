@@ -708,7 +708,15 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }} className="space-y-4">
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '16px',
+          paddingBottom: isDesktop ? '16px' : 'calc(96px + env(safe-area-inset-bottom))',
+        }}
+        className="space-y-4"
+      >
         {messages.map((message) => (
           <div
             key={message.id}
@@ -781,7 +789,18 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
 
       {/* Input */}
       {currentStep !== 'certificate-type' && currentStep !== 'building-type' && currentStep !== 'menu' && currentStep !== 'visit-time' && currentStep !== 'menu-after-visit' && currentStep !== 'contact-time' && currentStep !== 'menu-after-protocol' && currentStep !== 'menu-after-contact' && (
-        <div style={{ flexShrink: 0 }} className="bg-white border-t border-gray-200 px-4 py-3">
+        <div
+          style={{
+            position: isDesktop ? 'sticky' as const : 'fixed' as const,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 50,
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            flexShrink: 0,
+          }}
+          className="bg-white border-t border-gray-200 px-4 py-3"
+        >
           {validationError && (
             <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
