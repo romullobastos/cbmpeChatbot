@@ -696,29 +696,47 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
   return (
     <div className={`${isDesktop ? 'h-full' : 'min-h-screen'} flex flex-col bg-gray-50 ${isDesktop ? 'relative' : 'fixed inset-0'} overflow-hidden`}>
       {/* Header */}
-      <div className={`flex-shrink-0 bg-gradient-to-r from-red-700 to-red-600 px-4 flex items-center justify-between shadow-lg ${isDesktop ? 'py-4' : 'py-16'}`}>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-            <Shield className="w-6 h-6 text-red-700" />
-          </div>
-          <div>
-            <h1 className="text-white">Assistente CBMPE</h1>
-            <p className="text-white/80 text-xs">Online</p>
-          </div>
-        </div>
-        {!isDesktop && (
+      <header className="bg-gradient-to-r from-red-700 to-red-600 shadow-lg">
+        <div className="flex items-center justify-between px-4" style={{ paddingTop: isDesktop ? '16px' : '13px', paddingBottom: '12px' }}>
+          {/* Logo e Título */}
           <div className="flex items-center gap-3">
-            <button onClick={() => onNavigate('menu')}>
-              <Menu className="w-6 h-6 text-white" />
-            </button>
-            <button onClick={onLogout} title="Sair">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
+            <div 
+              className="bg-white flex items-center justify-center"
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                borderRadius: '50%' 
+              }}
+            >
+              <Shield className="w-4 h-4 text-red-700" />
+            </div>
+            <div>
+              <h1 className="text-white text-sm font-medium">Assistente CBMPE</h1>
+              <p className="text-white/80 text-xs">Online</p>
+            </div>
           </div>
-        )}
-      </div>
+          
+          {/* Botões Mobile */}
+          {!isDesktop && (
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => onNavigate('menu')} 
+                className="p-2 hover:bg-white/10 rounded"
+              >
+                <Menu className="w-5 h-5 text-white" />
+              </button>
+              <button 
+                onClick={onLogout} 
+                className="p-2 hover:bg-white/10 rounded"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
 
       {/* Messages */}
       <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${isDesktop ? 'pb-4' : 'pb-24'}`}>
