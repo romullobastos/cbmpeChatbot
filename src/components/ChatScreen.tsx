@@ -160,13 +160,13 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
     {
       id: 1,
       type: 'bot',
-      text: 'Olá! Bem-vindo ao atendimento do CBMPE. 👋\n\nSou o assistente virtual e estou aqui para ajudar com a emissão de certificados.\n\nQual tipo de certificado você precisa?',
-      options: certificateTypes,
+      text: 'Olá! Bem-vindo ao atendimento do CBMPE. 👋\n\nSou o assistente virtual e estou aqui para ajudar.\n\nComo posso ajudar você hoje?',
+      options: ['Solicitar certificado', 'Abrir chamado', 'Consultar protocolo'],
       timestamp: new Date(),
     },
   ]);
   const [inputValue, setInputValue] = useState('');
-  const [currentStep, setCurrentStep] = useState('certificate-type');
+  const [currentStep, setCurrentStep] = useState('initial-menu');
   const [userData, setUserData] = useState({
     certificateType: '',
     name: '',
@@ -292,19 +292,24 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
   const validateInput = (value: string, step: string): { valid: boolean; message?: string } => {
     switch (step) {
       case 'name':
+      case 'ticket-name':
         return validateName(value);
       case 'cpf':
+      case 'ticket-cpf':
         return validateCPF(value);
       case 'address':
+      case 'ticket-address':
         return validateAddress(value);
       case 'phone':
       case 'phone-for-contact':
+      case 'ticket-phone':
         return validatePhone(value);
       case 'visit-date':
         return validateDate(value);
       case 'protocol-number':
         return validateProtocol(value);
       case 'contact-reason':
+      case 'ticket-reason':
         return value.trim().length >= 10 
           ? { valid: true } 
           : { valid: false, message: 'Por favor, descreva melhor sua necessidade (mínimo 10 caracteres).' };
@@ -399,6 +404,41 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
         showContactConfirmation(value);
         break;
 
+      case 'ticket-name':
+        setUserData((prev) => ({ ...prev, name: value }));
+        addMessage('Agora, informe seu CPF:\n\n(Formato: 000.000.000-00 ou somente números)', 'bot');
+        setCurrentStep('ticket-cpf');
+        break;
+
+      case 'ticket-cpf':
+        {
+          const cleanCPFTicket = value.replace(/\D/g, '');
+          setUserData((prev) => ({ ...prev, cpf: formatCPF(cleanCPFTicket) }));
+          addMessage('Qual seu telefone para contato?\n\n(Formato: (00) 00000-0000)', 'bot');
+          setCurrentStep('ticket-phone');
+        }
+        break;
+
+      case 'ticket-phone':
+        {
+          const cleanPhoneTicket = value.replace(/\D/g, '');
+          setUserData((prev) => ({ ...prev, phone: formatPhone(cleanPhoneTicket) }));
+          addMessage('Qual o endereço do local?\n\n(Incluir rua, número, bairro e cidade)', 'bot');
+          setCurrentStep('ticket-address');
+        }
+        break;
+
+      case 'ticket-address':
+        setUserData((prev) => ({ ...prev, address: value }));
+        addMessage('Por favor, descreva brevemente o motivo do chamado:', 'bot');
+        setCurrentStep('ticket-reason');
+        break;
+
+      case 'ticket-reason':
+        setUserData((prev) => ({ ...prev, contactReason: value }));
+        showTicketConfirmation();
+        break;
+
       default:
         addMessage('Desculpe, não entendi. Pode reformular?', 'bot');
     }
@@ -462,10 +502,52 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
     setCurrentStep('menu-after-contact');
   };
 
+  const showTicketConfirmation = () => {
+    const now = new Date();
+    const requestDate = now.toLocaleDateString('pt-BR');
+    const requestTime = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const ticketNumber = `CHAMADO-${generateProtocolDigits(8)}`;
+    
+    const confirmation = `🎫 Chamado aberto com sucesso!\n\n📋 Número do chamado: ${ticketNumber}\n📅 Data: ${requestDate}\n🕐 Hora: ${requestTime}\n\n👤 Nome: ${userData.name}\n🆔 CPF: ${userData.cpf}\n📞 Telefone: ${userData.phone}\n📍 Endereço: ${userData.address}\n\n📝 Motivo: ${userData.contactReason}\n\n⚡ Atendimento imediato solicitado!\n\nUm atendente entrará em contato em até 30 minutos.\n\nVocê receberá atualizações por SMS.\n\nO que deseja fazer agora?`;
+    
+    addMessage(confirmation, 'bot', [
+      'Solicitar certificado',
+      'Consultar protocolo',
+      'Voltar ao início',
+    ]);
+    setCurrentStep('menu-after-ticket');
+  };
+
   const handleOptionClick = (option: string) => {
     setValidationError('');
     
-    if (currentStep === 'certificate-type') {
+    if (currentStep === 'initial-menu') {
+      addMessage(option, 'user');
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        if (option === 'Solicitar certificado') {
+          addMessage(
+            'Ótimo! Qual tipo de certificado você precisa?',
+            'bot',
+            certificateTypes
+          );
+          setCurrentStep('certificate-type');
+        } else if (option === 'Abrir chamado') {
+          addMessage(
+            'Para abrir um chamado de atendimento imediato, preciso de algumas informações.\n\nPor favor, informe seu nome completo:',
+            'bot'
+          );
+          setCurrentStep('ticket-name');
+        } else if (option === 'Consultar protocolo') {
+          addMessage(
+            'Para consultar seu protocolo, por favor informe o número:\n\n(Formato: CBMPE-XXXXXXXXXX)',
+            'bot'
+          );
+          setCurrentStep('protocol-number');
+        }
+      }, 1200);
+    } else if (currentStep === 'certificate-type') {
       handleCertificateTypeSelect(option);
     } else if (currentStep === 'building-type') {
       addMessage(option, 'user');
@@ -637,6 +719,34 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
           );
         }
       }, 1200);
+    } else if (currentStep === 'menu-after-ticket') {
+      addMessage(option, 'user');
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        if (option === 'Solicitar certificado') {
+          addMessage(
+            'Ótimo! Qual tipo de certificado você precisa?',
+            'bot',
+            certificateTypes
+          );
+          setCurrentStep('certificate-type');
+        } else if (option === 'Consultar protocolo') {
+          addMessage(
+            'Para consultar seu protocolo, por favor informe o número:\n\n(Formato: CBMPE-XXXXXXXXXX)',
+            'bot'
+          );
+          setCurrentStep('protocol-number');
+        } else if (option === 'Voltar ao início') {
+          resetToStart();
+        } else {
+          addMessage(
+            'Esta funcionalidade estará disponível em breve. Como posso ajudar?',
+            'bot',
+            ['Solicitar certificado', 'Voltar ao início']
+          );
+        }
+      }, 1200);
     }
   };
 
@@ -662,13 +772,13 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
   };
 
   const resetToStart = () => {
-    setCurrentStep('certificate-type');
+    setCurrentStep('initial-menu');
     setMessages([
       {
         id: 1,
         type: 'bot',
-        text: 'Olá! Bem-vindo ao atendimento do CBMPE. 👋\n\nSou o assistente virtual e estou aqui para ajudar com a emissão de certificados.\n\nQual tipo de certificado você precisa?',
-        options: certificateTypes,
+        text: 'Olá! Bem-vindo ao atendimento do CBMPE. 👋\n\nSou o assistente virtual e estou aqui para ajudar.\n\nComo posso ajudar você hoje?',
+        options: ['Solicitar certificado', 'Abrir chamado', 'Consultar protocolo'],
         timestamp: new Date(),
       },
     ]);
@@ -689,17 +799,22 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
   const getPlaceholder = () => {
     switch (currentStep) {
       case 'name':
+      case 'ticket-name':
         return 'Ex: João Silva Santos';
       case 'cpf':
+      case 'ticket-cpf':
         return 'Ex: 000.000.000-00';
       case 'address':
+      case 'ticket-address':
         return 'Ex: Rua das Flores, 123, Boa Vista, Recife-PE';
       case 'phone':
-        return 'Ex: (81) 98765-4321';
       case 'phone-for-contact':
+      case 'ticket-phone':
         return 'Ex: (81) 98765-4321';
       case 'visit-date':
         return 'Ex: 25/12/2024';
+      case 'ticket-reason':
+        return 'Descreva o motivo do chamado...';
       default:
         return 'Digite sua mensagem...';
     }
@@ -824,7 +939,7 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
       </div>
 
       {/* Input */}
-      {currentStep !== 'certificate-type' && currentStep !== 'building-type' && currentStep !== 'menu' && currentStep !== 'visit-time' && currentStep !== 'menu-after-visit' && currentStep !== 'contact-time' && currentStep !== 'menu-after-protocol' && currentStep !== 'menu-after-contact' && (
+      {currentStep !== 'initial-menu' && currentStep !== 'certificate-type' && currentStep !== 'building-type' && currentStep !== 'menu' && currentStep !== 'visit-time' && currentStep !== 'menu-after-visit' && currentStep !== 'contact-time' && currentStep !== 'menu-after-protocol' && currentStep !== 'menu-after-contact' && currentStep !== 'menu-after-ticket' && (
         <div className={`${isDesktop ? 'sticky' : 'fixed'} bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-3 flex-shrink-0`} style={{ paddingBottom: isDesktop ? '12px' : 'calc(12px + env(safe-area-inset-bottom))' }}>
           {validationError && (
             <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
