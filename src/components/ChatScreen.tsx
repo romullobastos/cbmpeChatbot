@@ -333,7 +333,7 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
         addMessage(
           'Qual o tipo de edificação?',
           'bot',
-          ['Residencial', 'Comercial', 'Industrial', 'Misto', 'Outro']
+          ['Comercial', 'Industrial', 'Hospitalar', 'Misto', 'Outro']
         );
         setCurrentStep('building-type');
         break;
@@ -405,7 +405,11 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
   };
 
   const showSummary = (buildingType: string) => {
-    const summary = `Perfeito! Aqui está o resumo da sua solicitação:\n\n📋 Certificado: ${userData.certificateType}\n👤 Nome: ${userData.name}\n🆔 CPF: ${userData.cpf}\n📍 Endereço: ${userData.address}\n🏢 Tipo: ${buildingType}\n\n✅ Sua solicitação foi registrada com sucesso!\n\nNúmero do protocolo: CBMPE-${generateProtocolDigits(10)}\n\nO que deseja fazer agora?`;
+    const now = new Date();
+    const requestDate = now.toLocaleDateString('pt-BR');
+    const requestTime = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    
+    const summary = `Perfeito! Aqui está o resumo da sua solicitação:\n\n📋 Certificado: ${userData.certificateType}\n👤 Nome: ${userData.name}\n🆔 CPF: ${userData.cpf}\n📍 Endereço: ${userData.address}\n🏢 Tipo: ${buildingType}\n📅 Data da solicitação: ${requestDate}\n🕐 Hora da solicitação: ${requestTime}\n\n✅ Sua solicitação foi registrada com sucesso!\n\nNúmero do protocolo: CBMPE-${generateProtocolDigits(10)}\n\nO que deseja fazer agora?`;
     
     addMessage(summary, 'bot', [
       'Agendar vistoria',
@@ -417,8 +421,12 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
   };
 
   const showVisitSummary = (visitTime: string) => {
+    const now = new Date();
+    const requestDate = now.toLocaleDateString('pt-BR');
+    const requestTime = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     const protocolNumber = `CBMPE-${generateProtocolDigits(10)}`;
-    const summary = `✅ Vistoria agendada com sucesso!\n\n📋 Protocolo original: CBMPE-${generateProtocolDigits(10)}\n📅 Agendamento: ${protocolNumber}\n\n👤 Nome: ${userData.name}\n📞 Telefone: ${userData.phone}\n📍 Endereço: ${userData.address}\n📆 Data: ${userData.visitDate}\n🕐 Horário: ${visitTime}\n\nVocê receberá uma confirmação por SMS em até 24h.\n\n⚠️ Importante: Tenha em mãos todos os documentos do imóvel e projetos aprovados.\n\nO que deseja fazer agora?`;
+    
+    const summary = `✅ Vistoria agendada com sucesso!\n\n📋 Protocolo original: CBMPE-${generateProtocolDigits(10)}\n📅 Agendamento: ${protocolNumber}\n\n👤 Nome: ${userData.name}\n📞 Telefone: ${userData.phone}\n📍 Endereço: ${userData.address}\n📆 Data da vistoria: ${userData.visitDate}\n🕐 Horário da vistoria: ${visitTime}\n📅 Data da solicitação: ${requestDate}\n🕐 Hora da solicitação: ${requestTime}\n\nVocê receberá uma confirmação por SMS em até 24h.\n\n⚠️ Importante: Tenha em mãos todos os documentos do imóvel e projetos aprovados.\n\nO que deseja fazer agora?`;
     
     addMessage(summary, 'bot', [
       'Novo certificado',
@@ -440,7 +448,11 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
   };
 
   const showContactConfirmation = (contactTime: string) => {
-    const confirmation = `✅ Solicitação de contato registrada com sucesso!\n\n👤 Nome: ${userData.name}\n📞 Telefone: ${userData.phone}\n📍 Endereço: ${userData.address}\n📅 Data da vistoria: ${userData.visitDate}\n🕐 Horário: ${userData.visitTime}\n⏰ Melhor horário para contato: ${contactTime}\n\nMotivo do contato: ${userData.contactReason}\n\nO que deseja fazer agora?`;
+    const now = new Date();
+    const requestDate = now.toLocaleDateString('pt-BR');
+    const requestTime = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    
+    const confirmation = `✅ Solicitação de contato registrada com sucesso!\n\n👤 Nome: ${userData.name}\n📞 Telefone: ${userData.phone}\n📍 Endereço: ${userData.address}\n📅 Data da vistoria: ${userData.visitDate}\n🕐 Horário da vistoria: ${userData.visitTime}\n⏰ Melhor horário para contato: ${contactTime}\n📅 Data da solicitação: ${requestDate}\n🕐 Hora da solicitação: ${requestTime}\n\nMotivo do contato: ${userData.contactReason}\n\nO que deseja fazer agora?`;
     
     addMessage(confirmation, 'bot', [
       'Novo certificado',
