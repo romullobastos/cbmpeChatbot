@@ -191,6 +191,19 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
     scrollToBottom();
   }, [messages, isTyping]);
 
+  // Handle mobile viewport changes (keyboard)
+  useEffect(() => {
+    if (!isDesktop) {
+      const handleResize = () => {
+        // Force scroll to bottom when keyboard appears/disappears
+        setTimeout(scrollToBottom, 100);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, [isDesktop]);
+
   // Processar ação inicial do menu
   useEffect(() => {
     if (initialAction && onActionHandled) {
@@ -681,9 +694,9 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
   };
 
   return (
-    <div style={{ height: '100%', minHeight: isDesktop ? 'auto' : '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#f9fafb', overflow: 'hidden', position: isDesktop ? 'relative' : 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
+    <div className={`${isDesktop ? 'h-full' : 'min-h-screen'} flex flex-col bg-gray-50 ${isDesktop ? 'relative' : 'fixed inset-0'} overflow-hidden`}>
       {/* Header */}
-      <div style={{ flexShrink: 0, paddingTop: isDesktop ? '16px' : '48px' }} className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-4 flex items-center justify-between shadow-lg">
+      <div className={`flex-shrink-0 bg-gradient-to-r from-red-700 to-red-600 px-4 flex items-center justify-between shadow-lg ${isDesktop ? 'py-4' : 'py-16'}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
             <Shield className="w-6 h-6 text-red-700" />
@@ -708,22 +721,14 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
       </div>
 
       {/* Messages */}
-      <div
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '16px',
-          paddingBottom: isDesktop ? '16px' : 'calc(96px + env(safe-area-inset-bottom))',
-        }}
-        className="space-y-4"
-      >
+      <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${isDesktop ? 'pb-4' : 'pb-24'}`}>
         {messages.map((message) => (
           <div
             key={message.id}
             className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+              className={`max-w-[85%] rounded-2xl px-4 py-3 ${
                 message.type === 'user'
                   ? 'bg-red-700 text-white rounded-br-sm'
                   : message.type === 'error'
@@ -744,7 +749,8 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
                     <button
                       key={index}
                       onClick={() => handleOptionClick(option)}
-                      className="w-full text-left px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm border border-gray-200 transition-colors"
+                      className="w-full text-left px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm border border-gray-200 transition-colors active:bg-gray-200"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
                     >
                       {option}
                     </button>
@@ -789,25 +795,14 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
 
       {/* Input */}
       {currentStep !== 'certificate-type' && currentStep !== 'building-type' && currentStep !== 'menu' && currentStep !== 'visit-time' && currentStep !== 'menu-after-visit' && currentStep !== 'contact-time' && currentStep !== 'menu-after-protocol' && currentStep !== 'menu-after-contact' && (
-        <div
-          style={{
-            position: isDesktop ? 'sticky' as const : 'fixed' as const,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 50,
-            paddingBottom: 'env(safe-area-inset-bottom)',
-            flexShrink: 0,
-          }}
-          className="bg-white border-t border-gray-200 px-4 py-3"
-        >
+        <div className={`${isDesktop ? 'sticky' : 'fixed'} bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-3 flex-shrink-0`} style={{ paddingBottom: isDesktop ? '12px' : 'calc(12px + env(safe-area-inset-bottom))' }}>
           {validationError && (
             <div className="mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
               <p className="text-xs text-red-700">{validationError}</p>
             </div>
           )}
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-end">
             <Input
               value={inputValue}
               onChange={(e) => {
@@ -815,12 +810,19 @@ export function ChatScreen({ onNavigate, isDesktop = false, initialAction, onAct
                 setValidationError('');
               }}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              onFocus={() => {
+                // Scroll to bottom when input is focused on mobile
+                if (!isDesktop) {
+                  setTimeout(scrollToBottom, 300);
+                }
+              }}
               placeholder={getPlaceholder()}
-              className={`flex-1 ${validationError ? 'border-red-300 focus:border-red-500' : ''}`}
+              className={`flex-1 min-w-0 ${validationError ? 'border-red-300 focus:border-red-500' : ''}`}
+              style={{ fontSize: '16px' }} // Prevents zoom on iOS
             />
             <Button
               onClick={handleSendMessage}
-              className="bg-red-700 hover:bg-red-800"
+              className="bg-red-700 hover:bg-red-800 flex-shrink-0"
               size="icon"
             >
               <Send className="w-5 h-5" />
