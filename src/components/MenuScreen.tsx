@@ -63,7 +63,7 @@ export function MenuScreen({ onNavigate, onChatAction, isDesktop = false, onLogo
   return (
     <div className="h-full bg-gray-50 flex flex-col">
       {/* Header */}
-      <div style={{ paddingTop: isDesktop ? '24px' : '48px' }} className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-6">
+      <div style={{ paddingTop: isDesktop ? '24px' : '13px' }} className="bg-gradient-to-r from-red-700 to-red-600 px-6 py-6">
         <div className="flex items-center gap-3 mb-2">
           {!isDesktop && (
             <button onClick={() => onNavigate('chat')}>
